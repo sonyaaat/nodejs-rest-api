@@ -13,7 +13,7 @@ const updateContactScema = Joi.object({
 const updateContact = async (req, res) => {
   const id = req.params.contactId;
   if (!req.body) {
-    throw createError(400, "missing fields");
+    res.status(404).json({message: "missing fields"})
   }
   const { error } = updateContactScema.validate(req.body);
   if (error) {
@@ -23,6 +23,6 @@ const updateContact = async (req, res) => {
   if (!result) {
     throw createError(404, `Contact with id ${id} not found`);
   }
-  res.json({ status: "success", code: "200", data: result });
+  res.status(200).json({ data: result });
 };
 module.exports = updateContact;
