@@ -1,6 +1,6 @@
-const contactOperations = require("../../models/contacts");
-const createError = require("http-errors");
+
 const Joi = require("joi");
+const Product=require("../../models/contacts")
 
 const updateContactScema = Joi.object({
   name: Joi.string().min(5).max(30),
@@ -17,11 +17,11 @@ const updateContact = async (req, res) => {
   }
   const { error } = updateContactScema.validate(req.body);
   if (error) {
-    throw createError(400, error.message);
+    res.status(404).json({message: error.message})
   }
-  const result = await contactOperations.updateContact(id, req.body);
+  const result = await Product.findByIdAndUpdate(id,req.body,{new:true})
   if (!result) {
-    throw createError(404, `Contact with id ${id} not found`);
+    res.status(404).json({message: `Contact with id ${id} not found`})
   }
   res.status(200).json({ data: result });
 };
