@@ -9,14 +9,26 @@ const contactsSchema = Joi.object({
     })
     .required(),
   phone: Joi.string().min(8).max(15).required(),
-  favourire:Joi.boolean()
+  favorite:Joi.boolean()
 });
 const addContact = async (req, res) => {
+  const {id}=req.user
   const { error } = contactsSchema.validate(req.body);
   if (error) {
     res.status(404).json({message: error.message})
+    return
   }
-  const result= await Product.create(req.body)
+  const product=await Product.findOne({email:req.body.email,owner:id})
+  if(product)
+  {
+    res.status(404).json({ message: `Contact with email ${req.body.email} already exists` });
+    return
+  }
+  const result= await Product.create({...req.body,owner:id})
+  if (!result) {
+    res.status(404).json({ message: `Contact with id ${id} not found` });
+    return
+  }
   res.status(201).json({ data: result });
 };
 module.exports = addContact;
