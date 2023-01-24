@@ -5,19 +5,23 @@ const updateFavourite = async (req, res) => {
     favorite: Joi.boolean().required(),
   });
   const id = req.params.contactId;
-  const {favorite}=req.body
+  const { favorite } = req.body;
   if (!req.body) {
     res.status(404).json({ message: "missing fields" });
   }
   const { error } = favSchema.validate(req.body);
   if (error) {
     res.status(404).json({ message: error.message });
-    return
+    return;
   }
-  const result = await Product.findByIdAndUpdate(id, {favorite}, { new: true });
+  const result = await Product.findByIdAndUpdate(
+    id,
+    { favorite },
+    { new: true }
+  );
   if (!result) {
     res.status(404).json({ message: `Contact with id ${id} not found` });
-    return
+    return;
   }
   res.status(200).json({ data: result });
 };
