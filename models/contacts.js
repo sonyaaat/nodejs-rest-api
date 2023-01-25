@@ -1,3 +1,4 @@
+
 const {Schema,model}=require("mongoose")
  const contactSchema=Schema({
   name: {
@@ -16,6 +17,11 @@ const {Schema,model}=require("mongoose")
     type: Boolean,
     default: false,
   },
+  owner: {
+    type: Schema.Types.ObjectId,
+    ref: 'user',
+    required:true
+  }
 },{versionKey:false,timeStaps:true})
 const Contact=model("contact",contactSchema)
 module.exports=Contact
