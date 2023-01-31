@@ -1,5 +1,6 @@
 const { Conflict } = require("http-errors");
 const Joi = require("joi");
+const gravatar = require('gravatar');
 const User = require("../../models/users");
 const bcrypt=require("bcryptjs")
 const usersSchema = Joi.object({
@@ -10,7 +11,8 @@ const usersSchema = Joi.object({
     })
     .required(),
   password: Joi.string().min(5).max(20).required(),
-  subscription: Joi.string()
+  subscription: Joi.string(),
+  avatar: Joi.string(),
 });
 const register = async (req, res, next) => {
   const { error } = usersSchema.validate(req.body);
@@ -18,12 +20,13 @@ const register = async (req, res, next) => {
     res.status(404).json({ message: error.message });
   }
   const { subscription, email, password } = req.body;
+  const avatarURL=gravatar.url(email)
   const user = await User.find({ email });
   if (!user) {
     throw new Conflict(`User with email ${email}  already exists`);
   }
   const hashPassword=bcrypt.hashSync(password,bcrypt.genSaltSync(10))
-  await User.create({ subscription, email, password:hashPassword });
+  await User.create({ subscription, email, password:hashPassword, avatarURL});
   if (!subscription) {
     res.status(201).json({ user: email, subscription: "starter" });
     return;

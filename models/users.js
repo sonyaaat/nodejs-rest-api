@@ -15,7 +15,8 @@ const {Schema,model}=require("mongoose")
           enum: ["starter", "pro", "business"],
           default: "starter"
         },
-        token: String
+        token: String,
+        avatarURL: String,
       }
  )
 
