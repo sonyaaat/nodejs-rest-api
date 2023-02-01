@@ -9,6 +9,10 @@ const { DB_HOST } = process.env;
 const request = require("supertest");
 const { SECRET_KEY } = process.env;
 describe("test auth routes", () => {
+  const loginUser = {
+    email: "bogdan@gmail.com",
+    password: "1234568990088",
+  };
   let server;
   beforeAll(() => {
     server = app.listen(3000);
@@ -19,26 +23,17 @@ describe("test auth routes", () => {
     await mongoose.connect(DB_HOST);
   });
 
-  afterEach(async () => {
-    await User.findOneAndRemove({ email: "bogdan@gmail.com" });
-  });
   test("login test", async () => {
-    const newUser = {
-      email: "bogdan@gmail.com",
-      password: bcrypt.hashSync("123456", bcrypt.genSaltSync(10)),
-    };
+    const user = await request(app).post("/api/auth/register").send(loginUser);
 
-    const user = await User.create(newUser);
-    const loginUser = {
-      email: "bogdan@gmail.com",
-      password: "123456",
-    };
     const response = await request(app).post("/api/auth/login").send(loginUser);
-    console.log(response.body);
+    console.log(response.body.token);
+
     expect(response.statusCode).toBe(201);
-    // const {body} = response;
-    // expect(response.body.token).toByTruthy();
-    const { token } = await User.findById(user._id);
+
+    const findedUser = await User.findOne({ email: loginUser.email });
+    console.log(findedUser);
+    const token = findedUser.token;
     expect(response.body.token).toBe(token);
   });
 
