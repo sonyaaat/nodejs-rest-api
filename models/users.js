@@ -17,6 +17,21 @@ const {Schema,model}=require("mongoose")
         },
         token: String,
         avatarURL: String,
+        verify: {
+          type: Boolean,
+          default: false,
+        },
+        verificationToken: {
+          type: String,
+          required: [true, 'Verify token is required'],
+        },
+        confirmed:{
+          type: Boolean,
+          default: false,
+        },
+        confirmationToken:{
+          type: String,
+        }
       }
  )
 
