@@ -1,13 +1,8 @@
 const User = require("../models/users");
-const jwt = require("jsonwebtoken");
 const app = require("../app");
-const bcrypt = require("bcryptjs");
-const dotenv = require("dotenv");
-const login = require("../controllers/auth/login");
 const mongoose = require("mongoose");
 const { DB_HOST } = process.env;
 const request = require("supertest");
-const { SECRET_KEY } = process.env;
 describe("test auth routes", () => {
   const loginUser = {
     email: "bogdan@gmail.com",
@@ -24,7 +19,7 @@ describe("test auth routes", () => {
   });
 
   test("login test", async () => {
-    const user = await request(app).post("/api/auth/register").send(loginUser);
+    await request(app).post("/api/auth/register").send(loginUser);
 
     const response = await request(app).post("/api/auth/login").send(loginUser);
     console.log(response.body.token);

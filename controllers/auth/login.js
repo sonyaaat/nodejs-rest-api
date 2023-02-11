@@ -13,7 +13,7 @@ const loginSchema = Joi.object({
       tlds: { allow: ["com", "net"] },
     })
     .required(),
-  password: Joi.string().min(5).max(20).required(),
+  password: Joi.string().min(5).max(50).required(),
 });
 const login = async(req, res, next) => {
   const { error } = loginSchema.validate(req.body);
@@ -24,6 +24,9 @@ const login = async(req, res, next) => {
   const user = await User.findOne({ email });
   if (!user) {
     throw new Unauthorized(`Email or password is wrong`);
+  }
+  if(!user.verify){
+    throw new Unauthorized(`Your account is not athorized`);
   }
   const {password:userPassword,subscription:userSubscription}=user
   const passCompare =  bcrypt.compareSync(password,userPassword);
